@@ -1,42 +1,170 @@
-# Getting Started with Create React App
+# Rakshita Dogra - Portfolio Website (Assignment 14)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is my **Component Library Portfolio Project (Assignment 14)** for the Full Stack Web Development program.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- React (Create React App)
+- Material UI for components
+- Dockerized production build running on **localhost:5575**
+- Five main sections: BasicInfo, Work, Skills, Resources, Developer Setup
+- Prettier + Husky pre-commit hook for clean commits
+- Tests written using React Testing Library & Jest
 
-### `npm start`
+## Step-by-Step Setup Instructions
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 1. Create React App
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npx create-react-app portfolio
+cd portfolio
+```
 
-### `npm test`
+### 2. Install Component Library (Material UI)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install @mui/material @emotion/react @emotion/styled
+```
 
-### `npm run build`
+### 3. Set Up Component Folder Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+mkdir -p src/components/BasicInfo src/components/Work src/components/Skills src/components/Resources src/components/DeveloperSetup
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Create `.jsx` files in each folder like: `BasicInfo.jsx`, `Work.jsx`, etc.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 4. Install Testing Tools (Already Included in CRA)
 
-### `npm run eject`
+You already have Jest and React Testing Library via Create React App.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+To test all files:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm test -- --watchAll=false
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 5. Set Up Prettier and Husky
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install --save-dev prettier husky
+npx husky install
+npm set-script prepare "husky install"
+npm run prepare
+npx husky add .husky/pre-commit "npx prettier --write ."
+```
 
+Example `.prettierrc`:
 
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "printWidth": 100
+}
+```
+
+Example `.prettierignore`:
+
+```
+node_modules
+build
+dist
+```
+
+### 6. Add Basic Tests
+
+Example for `BasicInfo.test.js`:
+
+```js
+import { render, screen } from '@testing-library/react';
+import BasicInfo from './BasicInfo';
+
+test('renders Rakshita Dogra name', () => {
+  render(<BasicInfo />);
+  const nameElement = screen.getByText(/Rakshita Dogra/i);
+  expect(nameElement).toBeInTheDocument();
+});
+```
+
+Repeat for other components like `Work`, `Skills`, etc.
+
+---
+
+## Docker Setup Instructions
+
+This project includes a `Dockerfile` that creates a production-ready container of your portfolio website.
+
+### Dockerfile Requirements Fulfilled
+
+✅ The Docker container is named:
+
+```
+dogra_rakshita_coding_assignment14
+```
+
+✅ The working directory inside the container is:
+
+```
+/dogra_rakshita_final_site
+```
+
+✅ The app is built and served using `nginx`.
+
+---
+
+### Dockerfile Content
+
+```Dockerfile
+# Stage 1: Build the React app
+FROM node:18-alpine as build
+WORKDIR /dogra_rakshita_final_site
+COPY . .
+RUN npm install
+RUN npm run build
+
+# Stage 2: Serve the app using nginx
+FROM nginx:alpine
+COPY --from=build /dogra_rakshita_final_site/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+---
+
+### Run with Docker (No Docker Compose)
+
+To build the image:
+
+```bash
+docker build -t dogra_rakshita_coding_assignment14 .
+```
+
+To run the container:
+
+```bash
+docker run -d -p 5575:80 --name dogra_rakshita_coding_assignment14 dogra_rakshita_coding_assignment14
+```
+
+Open your browser and visit:
+
+```
+http://localhost:5575
+```
+
+---
+
+## Submission
+
+- Submit `.zip` file of your `portfolio` project folder
+- Submit GitHub link: https://github.com/rdogra-y/portfolio
+
+---
+
+## 👩‍💻 Author Info
+
+- **Name**: Rakshita Dogra
+- **Program**: Full Stack Web Development
+- **Location**: Chandigarh, India
+- **GitHub**: [@rdogra-y](https://github.com/rdogra-y)
